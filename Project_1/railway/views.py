@@ -18,7 +18,9 @@ def home(request):
 
 @login_required
 def traininfo(request):
-    if request.method == "POST":                                       
+    if request.method == "POST": 
+    #commit      
+    	print ("true")                                
     	trainno = str(request.POST.get('trainno'))
     	if trainno == "" or 'e' in trainno:
             HttpResponse("invalid train number")		
