@@ -19,10 +19,10 @@ def home(request):
 @login_required
 def traininfo(request):
     if request.method == "POST":                                       
-    	 trainno = str(request.POST.get('trainno'))
-    	 if trainno == "" or 'e' in trainno:
-             HttpResponse("invalid train number")		
-    	 trainno = int(trainno)
+    	trainno = str(request.POST.get('trainno'))
+    	if trainno == "" or 'e' in trainno:
+            HttpResponse("invalid train number")		
+    	trainno = int(trainno)
         train=Train.objects.get(Train_No=trainno)
         stoppage=Stoppage.objects.get(Train_No=trainno)
         all_rows=Station.objects.get()
@@ -31,14 +31,15 @@ def traininfo(request):
             scode[str(row[0])] = str(row[1])
         station={}
         for row in stoppage:
-            station[str(row[1])] = scode[str(row[1])]           
-		 context = {"info":train, "stop":stoppage, "station":station, "show":True}
-		 if train == None:
-             return HttpResponse("invalid train number")
-		 else:
-             return HttpResponse(render(request, "traininfo.html", context))
-	 else:
-         return HttpResponse(render(request, "traininfo.html", {"show":False,}))
+        	station[str(row[1])] = scode[str(row[1])]           
+
+        context = {"info":train, "stop":stoppage, "station":station, "show":True}
+        if train == None:
+        	return HttpResponse("invalid train number")
+        else:
+        	return HttpResponse(render(request, "traininfo.html", context))
+    else:
+    	return HttpResponse(render(request, "traininfo.html", {"show":False,}))
 
 @login_required
 def findtrains(request):

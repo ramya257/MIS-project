@@ -20,25 +20,19 @@ class Contact(models.Model):
 	modified = models.DateTimeField(auto_now=True, auto_now_add=False)
 	created = models.DateTimeField(auto_now=False, auto_now_add=True)
 
-	
-class Stoppage(models.Model):
-	Train_No=models.ForeignKey(Train,db_column="Train.Train_No",max_length=6,default=0,null=False,primary_key=True,on_delete=models.CASCADE)
-	Station_Code=models.ForeignKey(Station,db_column="Station.Station_Code",max_length=5,null=False,default='',primary_key=True,on_delete=models.CASCADE)
-	Arrival_Time=models.TimeField(_(u"Conversation Time"), auto_now_add=True, blank=True)
-	Departure_Time=models.TimeField(_(u"Conversation Time"), auto_now_add=True, blank=True)
-	modified = models.DateTimeField(auto_now=True, auto_now_add=False)
-	created = models.DateTimeField(auto_now=False, auto_now_add=True)
-
 class Station(models.Model):
 	Station_Code=models.CharField(max_length=10,null=False,default='',primary_key=True)
 	Station_Name=models.CharField(max_length=30,null=False)
+	modified = models.DateTimeField(auto_now=True, auto_now_add=False)
+	created = models.DateTimeField(auto_now=False, auto_now_add=True)
+
     
 class Train(models.Model):
-    Train_No=models.IntegerField(max_length=6, null=False, default=0, blank=False,primary_key=True)
+    Train_No=models.IntegerField(null=False, default=0, blank=False,primary_key=True)
     Name=models.CharField(max_length=25,null=False,blank=False)
-    Seat_Sleeper=models.IntegerField(max_length=4,null=False,blank=True)
-    Seat_First_Class_AC=models.IntegerField(max_length=4,null=False,blank=True)
-    Seat_Third_Class_AC=models.IntegerField(max_length=4,null=False,blank=True)
+    Seat_Sleeper=models.IntegerField(null=False,blank=True)
+    Seat_First_Class_AC=models.IntegerField(null=False,blank=True)
+    Seat_Third_Class_AC=models.IntegerField(null=False,blank=True)
     Wifi=models.CharField(max_length=1,null=False,blank=False)
     Food=models.CharField(max_length=1,null=False,blank=False) 
     Run_On_Sunday=models.CharField(max_length=1,null=False,blank=False)
@@ -48,6 +42,14 @@ class Train(models.Model):
     Run_On_Thursday=models.CharField(max_length=1,null=False,blank=False)
     Run_On_Friday=models.CharField(max_length=1,null=False,blank=False)
     Run_On_Saturday=models.CharField(max_length=1,null=False,blank=False)
+
+class Stoppage(models.Model):
+	Train_No=models.ForeignKey(Train,db_column="Train.Train_No",max_length=6,default=0,null=False,on_delete=models.CASCADE)
+	Station_Code=models.ForeignKey(Station,db_column="Station.Station_Code",max_length=5,null=False,default='',on_delete=models.CASCADE)
+	Arrival_Time=models.TimeField(auto_now_add=True, blank=True)
+	Departure_Time=models.TimeField(auto_now_add=True, blank=True)
+	modified = models.DateTimeField(auto_now=True, auto_now_add=False)
+	created = models.DateTimeField(auto_now=False, auto_now_add=True)
 
 
 
