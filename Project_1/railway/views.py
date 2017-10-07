@@ -18,40 +18,27 @@ def home(request):
 
 @login_required
 def traininfo(request):
-	'''
-		This method can be called iff user is signed in
-		Case 1: GET request
-			render 	traininfo.html
-		Case 2: POST request
-			check for validation of inputs
-			if valid render modified traininfo.html
-	'''
-	if request.method == "POST":
-		trainno = request.POST.get('trainno')
-		if trainno == "" or 'e' in trainno:
-			return HttpResponse("invalid train number")		
-		trainno = int(trainno)
-		c = connection.cursor()
-		c.execute('SELECT * FROM Train WHERE Train_No = %d' %(trainno))
-		train = c.fetchone()
-		c.execute('SELECT * FROM Stoppage WHERE Train_No = %d' %(trainno))
-		stoppage = c.fetchall()
-
-		c.execute('SELECT * FROM Station')
-		scode = {}
-		for row in c.fetchall():
-			scode[str(row[0])] = str(row[1])
-		station = {}
-		for row in stoppage:
-			station[str(row[1])] = scode[str(row[1])]
-
-		context = {"info":train, "stop":stoppage, "station":station, "show":True}
-		if train == None:
-			return HttpResponse("invalid train number")
-		else:
-			return HttpResponse(render(request, "traininfo.html", context))
-	else:
-		return HttpResponse(render(request, "traininfo.html", {"show":False,}))
+    if request.method == "POST":                                       
+    	 trainno = str(request.POST.get('trainno'))
+    	 if trainno == "" or 'e' in trainno:
+             HttpResponse("invalid train number")		
+    	 trainno = int(trainno)
+        train=Train.objects.get(Train_No=trainno)
+        stoppage=Stoppage.objects.get(Train_No=trainno)
+        all_rows=Station.objects.get()
+        scode={}
+        for row in all_rows:
+            scode[str(row[0])] = str(row[1])
+        station={}
+        for row in stoppage:
+            station[str(row[1])] = scode[str(row[1])]           
+		 context = {"info":train, "stop":stoppage, "station":station, "show":True}
+		 if train == None:
+             return HttpResponse("invalid train number")
+		 else:
+             return HttpResponse(render(request, "traininfo.html", context))
+	 else:
+         return HttpResponse(render(request, "traininfo.html", {"show":False,}))
 
 @login_required
 def findtrains(request):
