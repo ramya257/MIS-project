@@ -15,5 +15,15 @@ class ContactAdmin(admin.ModelAdmin):
 	
 admin.site.register(Contact, ContactAdmin)
 
+class StationAdmin(admin.ModelAdmin):
+	list_display=["Station_Code","Station_Name","modified","created"]
+
+admin.site.register(Station, StationAdmin)
+
+class StoppageAdmin(admin.ModelAdmin):
+	list_display=["Train_No","Station_Code","Arrival_Time","Departure_Time","modified","created"]
+
+admin.site.register(Stoppage, StoppageAdmin)
+
 
 # Register your models here.
