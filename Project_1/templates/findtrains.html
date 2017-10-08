@@ -11,18 +11,18 @@
         $('form').on('submit', function (e) {
 
           e.preventDefault();
-          var thisTableRow = $(this).closest('tr');
+      
 
           $.ajax({
             type: 'POST',
             url: '/findtrains/',
             data: $('form').serialize(),
             success: function (data) {
-              $(thisTableRow).hide("slow");
+
               alert('form was submitted');
               console.log(data);
 
-               //for running days
+      
       if(data.train_details.length!=0)
       {
          $.each(data.train_details, function() {
