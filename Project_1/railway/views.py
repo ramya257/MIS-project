@@ -6,6 +6,7 @@ from django.shortcuts import render
 from django.db import connection
 from models import *
 import json
+from django.db.models import Q
 
 
 import MySQLdb
@@ -110,9 +111,12 @@ def findtrains(request):
 			check for validation of inputs
 			if valid render modified findtrains.html
 	'''
+	response_json={}
 	if request.method == "POST":
 		fstation = request.POST.get('fstation')
 		sstation = request.POST.get('sstation')
+		print(fstation)
+		print(sstation)
 
 		if len(fstation) == 0 or len(sstation) == 0:
 			return HttpResponse("station code can't be empty")
@@ -131,18 +135,27 @@ def findtrains(request):
 		# c = connection.cursor()
 		# c.execute('''select a.Train_No from Stoppage as a join Stoppage as b on a.Train_No = b.Train_No 
 		# 	         where a.Station_Code = "%s" and b.Station_Code = "%s" ''' %(fstation, sstation))
-		
+		response_json["train_details"]=[]
 		# trains = c.fetchall()
-
-		#trains=Stoppage.objects.raw('select a.Train_No from Stoppage as a join Stoppage as b on a.Train_No = b.Train_No where a.Station_Code = "%s" and b.Station_Code = "%s" ' %(fstation, sstation))
-
-		if len(trains) == 0:
-			return HttpResponse("invalid station code")
-
-		context = {"trains":trains, "show":True}
-
-		return HttpResponse(render(request, "findtrains.html", context))
-		
+		try:
+			filterargs = { 'Station_Code': fstation, 'Station_Code': sstation}
+			trains=Stoppage.objects.filter(**filterargs)
+			for t in trains:
+				temp_trains={}
+				temp_trains["train_no"]=str(t.Train_No)
+				train_name=Train.objects.get(Train_No=str(t.Train_No))
+				temp_trains["train_name"]=str(train_name.Name)
+				response_json["train_details"].append(temp_trains)	
+				print(response_json)
+			return JsonResponse(response_json)
+		except Exception as e:
+			print(e)
+			return HttpResponse("Something went wrong!!")
+		finally:
+			print("success")
+			pass
+			
+		#trains=train1.filter(Q(Station_Code=fstation) | Q(Station_Code=sstation)).values('Train_No').distinct()
 	else:
 		return HttpResponse(render(request, "findtrains.html", {"show":False}))	
 

@@ -5,27 +5,79 @@
 <head>
   <title>home</title>
   <link rel="stylesheet" href="{% static 'css/findtrains.css' %}" /> 
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script>
+      $(function () {
+        $('form').on('submit', function (e) {
+
+          e.preventDefault();
+          var thisTableRow = $(this).closest('tr');
+
+          $.ajax({
+            type: 'POST',
+            url: '/findtrains/',
+            data: $('form').serialize(),
+            success: function (data) {
+              $(thisTableRow).hide("slow");
+              alert('form was submitted');
+              console.log(data);
+
+               //for running days
+      if(data.train_details.length!=0)
+      {
+         $.each(data.train_details, function() {
+      for (var key in this) {
+        $('#train_content').append("<tr>")
+        if (this.hasOwnProperty(key)) {
+          var row = $("<td>"+this[key] + "</td>");
+          console.log(key + " -> " + this[key]);
+        }
+        $('#train_content').append("</tr>")
+        $("#train_content").append(row);
+      }
+    });
+  }
+  else
+  {
+    $('#error').append("No Trains Found");
+  }
+     
+
+}
+            });
+          });
+
+        });
+  
+        
+</script>
+
 </head>
 <body>  
   <center>    
     <h1> Find Trains </h1>
-     <form method="POST">{% csrf_token %}
+     <form method="POST" name="myform">{% csrf_token %}
   		<b>STATION CODE 1</b><br>
   		<input type="text" name="fstation"><br><br>
   		<b>STATION CODE 2</b><br>
  		<input type="text" name="sstation"><br><br>
- 	    <input type="submit">
+ 	    <input type="submit" onclick="submitForm()">
 	</form> <br> 
     <a href="/logout/"> <button> logout </button> </a><br> 
   </center>    
   <center>
-  	{% if show %}
 	<h2>Trains Available</h2>
-	{% for trainno in trains %}
-	<i>{{trainno.0}}</i><br>
-	{% endfor %}<br>
+	<table border = 1, style="width:100%" id="train_content">
+  <tr>
+    <th>Train Number</th>
+    <th>Train Name</th>
+    <p id="error"></p>
+  </tr>
+  </table>
+  <br>
+  <br>
+
 	<a href="/traininfo/"> <button>click here to know the details of these trains </button></a><br>
-	{% endif %}
   </center>
 </body>
 </html>
