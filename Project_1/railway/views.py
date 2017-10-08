@@ -160,7 +160,7 @@ def findtrains(request):
 		return HttpResponse(render(request, "findtrains.html", {"show":False}))	
 
 @login_required
-def ticket(request):
+def ticket_details(request):
 	'''
 		This method can be called iff user is signed in
 		Case 1: GET request
