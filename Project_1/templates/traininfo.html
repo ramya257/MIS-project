@@ -5,42 +5,115 @@
 <head>
   <title>home</title>
   <link rel="stylesheet" href="{% static 'css/traininfo.css' %}" /> 
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script>
+      $(function () {
+        $('form').on('submit', function (e) {
+
+          e.preventDefault();
+
+          $.ajax({
+            type: 'POST',
+            url: '/traininfo/',
+            data: $('form').serialize(),
+            success: function (data) {
+              alert('form was submitted');
+              console.log(data);
+              //for stoppage done
+    $.each(data.stoppages, function() {
+      for (var key in this) {
+        $('#stoppage_content').append("<tr>")
+        if (this.hasOwnProperty(key)) {
+          var row = $("<td>"+this[key] + "</td>");
+          console.log(key + " -> " + this[key]);
+        }
+        $('#stoppage_content').append("</tr>")
+        $("#stoppage_content").append(row);
+      }
+      
+    });
+
+//for station details
+   for (var i=0;i<data.station_details.length;i++) {
+      var tr="<tr>";
+        var td1="<td>"+data.station_details[i]["station_name"]+"</td>";
+        var td2="<td>"+data.station_details[i]["station_code"]+"</td>";
+        $("#station_content").append(tr+td1+td2); 
+
+        }
+     
+    /*$.each(data.station_details, function() {
+      for (var key in this) {
+  
+        if (this.hasOwnProperty(key)) {
+          var row = $("<tr><td>"this[key] "</td></tr>");
+          console.log(key + " -> " + this[key]);
+        }
+        $("#station_content").append(row);
+      }
+    });*/
+
+    //for trains
+    $.each(data.train_details, function() {
+      for (var key in this) {
+        $('#train_content').append("<tr>")
+        if (this.hasOwnProperty(key)) {
+          var row = $("<td>"+this[key] + "</td>");
+          console.log(key + " -> " + this[key]);
+        }
+        $('#train_content').append("</tr>")
+        $("#train_content").append(row);
+      }
+    });
+
+    //for running days
+      $.each(data.train_running_days, function() {
+      for (var key in this) {
+        $('#train_running_days_content').append("<tr>")
+        if (this.hasOwnProperty(key)) {
+          var row = $("<td>"+this[key] + "</td>");
+          console.log(key + " -> " + this[key]);
+        }
+        $('#train_running_days_content').append("</tr>")
+        $("#train_running_days_content").append(row);
+      }
+    });
+           
+}
+            });
+          });
+
+        });
+
+    </script>
 </head>
 <body>  
   <center>    
     <h1> Train Info </h1>
-    <form method="POST">{% csrf_token %}
+    <form method="POST" name="myForm">
+    {% csrf_token %}
       <b>TRAIN NUMBER</b><br>
       <input type="number" name="trainno" min="10000" max="99999"><br><br>  
-      <input type="submit"><br>
+      <input type="submit" type="button" value="Submit"><br>
     </form> <br>
       <a href="/logout/"> <button> logout </button> </a><br> 
   </center>
-  {% if show %}
   <br>
- <table border = 1, style="width:100%">
+  <h2 style="color:white;">Train Details</h2>
+ <table border = 1, style="width:100%" id="train_content">
   <tr>
     <th>Number</th>
     <th>Name</th>
     <th>sleeper seats</th>
     <th>first ac seats</th>
-    <th>second ac seats</th>
     <th>third ac seats</th>
     <th>wifi</th>
+    <th>fare</th>
     <th>food</th>
   </tr>
-  <tr>
-    <td>{{info.0}}</td>
-    <td>{{info.1}}</td>
-    <td>{{info.2}}</td>
-    <td>{{info.3}}</td>
-    <td>{{info.4}}</td>
-    <td>{{info.5}}</td>
-    <td>{{info.6}}</td>
-    <td>{{info.7}}</td>    
-  </tr>  
 </table> <br> 
- <table border = 1, style="width:100%">
+<h2 style="color:white;">Train Running Days</h2>
+ <table border = 1, style="width:100%", id="train_running_days_content">
   <tr>
     <th>Sunday</th>
     <th>Monday</th>
@@ -50,44 +123,40 @@
     <th>Friday</th>
     <th>Saturday</th>
   </tr>
-  <tr>
-    <td>{{info.8}}</td>
-    <td>{{info.9}}</td>
-    <td>{{info.10}}</td>
-    <td>{{info.11}}</td>
-    <td>{{info.12}}</td>
-    <td>{{info.13}}</td>
-    <td>{{info.14}}</td>
-    <td>{{info.15}}</td>    
-  </tr>  
 </table> <br>
-
-<table border = 1, style="width:100%">  
+<h2 style="color:white;">Train Station Stoppage Details</h2>
+<table border = 1, style="width:100%", id="stoppage_content">  
   <tr>
-    <th>Station Code</th>
     <th>arrival time</th>
+    <th>Station Code</th>
     <th>departure time</th>
   </tr>
-  {% for row in stop %}
-    <tr>
-      <td>{{row.1}}</td>
-      <td>{{row.2}}</td>
-      <td>{{row.3}}</td>
-    </tr>  
-  {% endfor %}
 </table> <br>
-<table border = 1, style="width:100%">
+
+<h2 style="color:white;">Train Station Details</h2>
+<table border = 1, style="width:100%", id="station_content">
   <tr>
-    <th>Station Code</th>
     <th>Station Name</th>
+    <th>Station Code</th>
+    
   </tr>
-  {% for key, value in station.items %}
-    <tr>
-      <td>{{key}}</td>
-      <td>{{value}}</td>
-    </tr>  
-  {% endfor %}
 </table> <br>
-{% endif %}
 </body>
 </html>
+
+<!-- <script>
+  function required(val) {
+  $.ajax({
+  type: "POST",
+  url: "/send_shops/",
+  data:'city_id='+val,
+  success: function(data){
+     var $el = $("#shops-list");
+                    $el.empty(); // remove old options
+                    $.each(data.shop_data, function(index, obj){
+                $("#shops-list").append('<option value='+obj.shop_id+'>'+obj.shop_name+'</option>');
+            });     
+  }
+});
+}
+</script> -->

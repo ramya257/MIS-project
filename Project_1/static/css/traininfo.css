@@ -12,8 +12,9 @@ input[type=submit]
 
 body {
 	background-image: url("../images/train.jpg");		
-	background-repeat: no-repeat;
-    background-position: right top;
+    background-repeat: no-repeat; 
+     background-size: cover;
+     background-position: center center;
 }
 
 button {
@@ -36,6 +37,12 @@ h1 {
     color: white;
     font-size: 5vw;
 }
+h2 {
+    text-align: center;
+    color: white;
+    font-size: 3vw;
+}
+
 
 th {
     background-color: blue;

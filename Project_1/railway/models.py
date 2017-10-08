@@ -25,7 +25,11 @@ class Station(models.Model):
 	Station_Name=models.CharField(max_length=30,null=False)
 	modified = models.DateTimeField(auto_now=True, auto_now_add=False)
 	created = models.DateTimeField(auto_now=False, auto_now_add=True)
+	def __unicode__(self):
+		return str(self.Station_Code)
 
+
+	
     
 class Train(models.Model):
     Train_No=models.IntegerField(null=False, default=0, blank=False,primary_key=True)
@@ -34,6 +38,7 @@ class Train(models.Model):
     Seat_First_Class_AC=models.IntegerField(null=False,blank=True)
     Seat_Third_Class_AC=models.IntegerField(null=False,blank=True)
     Wifi=models.CharField(max_length=1,null=False,blank=False)
+    Fare=models.IntegerField(default=0,null=False)
     Food=models.CharField(max_length=1,null=False,blank=False) 
     Run_On_Sunday=models.CharField(max_length=1,null=False,blank=False)
     Run_On_Monday=models.CharField(max_length=1,null=False,blank=False)
@@ -42,10 +47,17 @@ class Train(models.Model):
     Run_On_Thursday=models.CharField(max_length=1,null=False,blank=False)
     Run_On_Friday=models.CharField(max_length=1,null=False,blank=False)
     Run_On_Saturday=models.CharField(max_length=1,null=False,blank=False)
+    modified = models.DateTimeField(auto_now=True, auto_now_add=False)
+    created = models.DateTimeField(auto_now=False, auto_now_add=True)
+
+    def __unicode__(self):
+		return str(self.Train_No)
+
+
 
 class Stoppage(models.Model):
-	Train_No=models.ForeignKey(Train,db_column="Train.Train_No",max_length=6,default=0,null=False,on_delete=models.CASCADE)
-	Station_Code=models.ForeignKey(Station,db_column="Station.Station_Code",max_length=5,null=False,default='',on_delete=models.CASCADE)
+	Train_No=models.ForeignKey(Train,db_column="Train.Train_No",max_length=6,default=0,null=False)
+	Station_Code=models.ForeignKey(Station,db_column="Station.Station_Code",max_length=5,null=False,default='')
 	Arrival_Time=models.TimeField(auto_now_add=True, blank=True)
 	Departure_Time=models.TimeField(auto_now_add=True, blank=True)
 	modified = models.DateTimeField(auto_now=True, auto_now_add=False)

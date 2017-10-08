@@ -25,8 +25,9 @@ class StoppageAdmin(admin.ModelAdmin):
 
 admin.site.register(Stoppage, StoppageAdmin)
 
-class TrainAdmin(admin.TrainAdmin):
-    list_display=["Train_no","Name","Seat_Sleeper","Seat_First_Class_AC","Seat_Second_Class_AC","Seat_Third_Class_AC",
-                  "Wifi","Food","Run_On_Sunday","Run_On_Monday","Run_On_Tuesday","Run_On_Wednesday",
-                  "Run_On_Thursday","Run_On_Friday","Run_On_Saturday"]
+class TrainAdmin(admin.ModelAdmin):
+    list_display=["Train_No","Name","Seat_Sleeper","Seat_First_Class_AC","Seat_Third_Class_AC",
+                  "Wifi","Food","Fare","Run_On_Sunday","Run_On_Monday","Run_On_Tuesday","Run_On_Wednesday",
+                  "Run_On_Thursday","Run_On_Friday","Run_On_Saturday","modified","created"]
+admin.site.register(Train, TrainAdmin)
 # Register your models here.

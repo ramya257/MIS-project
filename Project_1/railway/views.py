@@ -1,10 +1,12 @@
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
-from django.http import HttpResponseRedirect, HttpResponse
+from django.http import HttpResponseRedirect, HttpResponse, JsonResponse
 from django.shortcuts import render
 from django.db import connection
 from models import *
+import json
+
 
 import MySQLdb
 
@@ -22,24 +24,79 @@ def traininfo(request):
     #commit      
     	print ("true")                                
     	trainno = str(request.POST.get('trainno'))
+    	print(trainno)
     	if trainno == "" or 'e' in trainno:
-            HttpResponse("invalid train number")		
-    	trainno = int(trainno)
-        train=Train.objects.get(Train_No=trainno)
-        stoppage=Stoppage.objects.get(Train_No=trainno)
-        all_rows=Station.objects.get()
-        scode={}
-        for row in all_rows:
-            scode[str(row[0])] = str(row[1])
-        station={}
-        for row in stoppage:
-        	station[str(row[1])] = scode[str(row[1])]           
+            HttpResponse("invalid train number")	
+        response_json={}	
+        train=Train.objects.filter(Train_No=trainno)
+    
+        #stoppage_data=Stoppage.objects.filter(Train_No=trainno)
+        stoppage_data=Stoppage.objects.filter(Train_No=trainno)
+        # print(trainno)
+        # print(stoppage_data.Train_No)
+        # print(stoppage_data.Station_Code)
+        print(stoppage_data)
+        response_json["stoppages"]=[]
+        response_json["station_details"] = []
+        response_json["train_details"]=[]
+        response_json["train_running_days"]=[]
+        
+        #station_data=Station.objects.get(Station_Code=stoppage_data.Station_Code)
+        for stops in stoppage_data:
+        	temp_stoppage={}
+        	temp_stoppage["station_code"]=str(stops.Station_Code)
+        	temp_stoppage["arrival_time"]=str(stops.Arrival_Time)
+        	temp_stoppage["departure_time"]=str(stops.Departure_Time)
+        
+        response_json["stoppages"].append(temp_stoppage)
+        response_json["show"]=True
 
-        context = {"info":train, "stop":stoppage, "station":station, "show":True}
+        for trains in train:
+        	temp_trains={}
+        	temp_train_running_days={}
+        	temp_trains["train_number"]=str(trains.Train_No)
+        	temp_trains["train_name"]=str(trains.Name)
+        	temp_trains["sleepeer_seats"]=str(trains.Seat_Sleeper)
+        	temp_trains["ac_first_class_seats"]=str(trains.Seat_First_Class_AC)
+        	temp_trains["ac_third_class_seats"]=str(trains.Seat_Third_Class_AC)
+        	temp_trains["wifi"]=str(trains.Wifi)
+        	temp_trains["fare"]=str(trains.Fare)
+        	temp_trains["food"]=str(trains.Food)
+        	temp_train_running_days["Sunday"]=str(trains.Run_On_Sunday)
+        	temp_train_running_days["Monday"]=str(trains.Run_On_Monday)
+        	temp_train_running_days["Tuesday"]=str(trains.Run_On_Tuesday)
+        	temp_train_running_days["Wednesday"]=str(trains.Run_On_Wednesday)
+        	temp_train_running_days["Thursday"]=str(trains.Run_On_Thursday)
+        	temp_train_running_days["Friday"]=str(trains.Run_On_Friday)
+        	temp_train_running_days["Saturday"]=str(trains.Run_On_Saturday)
+        response_json["train_details"].append(temp_trains)
+        response_json["train_running_days"].append(temp_train_running_days)
+
+       # stoppage=Stoppage.objects.select_related().filter(train_Train_No=trainno)
+        # all_rows=Station.objects.all()
+        # print(all_rows)
+        # scode={}
+        # for row in all_rows:
+        #     scode[str(row[0])] = str(row[1])
+        # station={}
+      
+        for row in stoppage_data:
+        	print(1)
+        	print (row.Station_Code) 
+        	station_data=Station.objects.get(Station_Code=row.Station_Code)
+        	temp_json = {}
+        	temp_json["station_code"] = str(station_data.Station_Code)
+        	temp_json["station_name"] = str(station_data.Station_Name)
+        	response_json["station_details"].append(temp_json)
+              
+        print(response_json)
+        # context = {"info":train, "stop":stoppage_data, "station":station, "show":True}
+        # print(context)
         if train == None:
         	return HttpResponse("invalid train number")
         else:
-        	return HttpResponse(render(request, "traininfo.html", context))
+        	#return HttpResponse(render(request, "traininfo.html",{"obj_as_json": json.dumps(context)}))
+        	return JsonResponse(response_json)
     else:
     	return HttpResponse(render(request, "traininfo.html", {"show":False,}))
 
@@ -71,11 +128,13 @@ def findtrains(request):
 		if fstation == sstation:
 			return HttpResponse("station code must be different")
 
-		c = connection.cursor()
-		c.execute('''select a.Train_No from Stoppage as a join Stoppage as b on a.Train_No = b.Train_No 
-			         where a.Station_Code = "%s" and b.Station_Code = "%s" ''' %(fstation, sstation))
+		# c = connection.cursor()
+		# c.execute('''select a.Train_No from Stoppage as a join Stoppage as b on a.Train_No = b.Train_No 
+		# 	         where a.Station_Code = "%s" and b.Station_Code = "%s" ''' %(fstation, sstation))
 		
-		trains = c.fetchall()
+		# trains = c.fetchall()
+
+		#trains=Stoppage.objects.raw('select a.Train_No from Stoppage as a join Stoppage as b on a.Train_No = b.Train_No where a.Station_Code = "%s" and b.Station_Code = "%s" ' %(fstation, sstation))
 
 		if len(trains) == 0:
 			return HttpResponse("invalid station code")
