@@ -26,5 +26,5 @@ urlpatterns = [
     url(r'^logout/', views.home),
     url(r'^traininfo/', views.traininfo),
     url(r'^findtrains/', views.findtrains),
-    url(r'^ticket/', views.ticket),
+    url(r'^ticket_details/', views.ticket_details),
 ]
