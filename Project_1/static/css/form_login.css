@@ -1,7 +1,12 @@
 body {
-	background-image: url("../images/train.jpg");		
+	background-image: url("../images/train.jpg");
 	background-repeat: no-repeat;
-    background-position: right top;
+	background-size: cover;
+	height: 100%;
+	width:100%;
+	background-attachment: fixed;
+	background-position: center center;
+
 }
 
 h1 {
@@ -15,7 +20,7 @@ form {
     margin-top: 0em;
 }
 
-input[type=submit] 
+input[type=submit]
 {
     background-color: blue; /* Green */
     border: none;

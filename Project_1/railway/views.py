@@ -9,8 +9,6 @@ import json
 from django.db.models import Q
 
 
-import MySQLdb
-
 # Create your views here.
 
 def home(request):
@@ -21,16 +19,16 @@ def home(request):
 
 @login_required
 def traininfo(request):
-    if request.method == "POST": 
-    #commit      
-    	print ("true")                                
+    if request.method == "POST":
+    #commit
+    	print ("true")
     	trainno = str(request.POST.get('trainno'))
     	print(trainno)
     	if trainno == "" or 'e' in trainno:
-            HttpResponse("invalid train number")	
-        response_json={}	
+            HttpResponse("invalid train number")
+        response_json={}
         train=Train.objects.filter(Train_No=trainno)
-    
+
         #stoppage_data=Stoppage.objects.filter(Train_No=trainno)
         stoppage_data=Stoppage.objects.filter(Train_No=trainno)
         # print(trainno)
@@ -41,14 +39,14 @@ def traininfo(request):
         response_json["station_details"] = []
         response_json["train_details"]=[]
         response_json["train_running_days"]=[]
-        
+
         #station_data=Station.objects.get(Station_Code=stoppage_data.Station_Code)
         for stops in stoppage_data:
         	temp_stoppage={}
         	temp_stoppage["station_code"]=str(stops.Station_Code)
         	temp_stoppage["arrival_time"]=str(stops.Arrival_Time)
         	temp_stoppage["departure_time"]=str(stops.Departure_Time)
-        
+
         response_json["stoppages"].append(temp_stoppage)
         response_json["show"]=True
 
@@ -80,16 +78,16 @@ def traininfo(request):
         # for row in all_rows:
         #     scode[str(row[0])] = str(row[1])
         # station={}
-      
+
         for row in stoppage_data:
         	print(1)
-        	print (row.Station_Code) 
+        	print (row.Station_Code)
         	station_data=Station.objects.get(Station_Code=row.Station_Code)
         	temp_json = {}
         	temp_json["station_code"] = str(station_data.Station_Code)
         	temp_json["station_name"] = str(station_data.Station_Name)
         	response_json["station_details"].append(temp_json)
-              
+
         print(response_json)
         # context = {"info":train, "stop":stoppage_data, "station":station, "show":True}
         # print(context)
@@ -133,7 +131,7 @@ def findtrains(request):
 			return HttpResponse("station code must be different")
 
 		# c = connection.cursor()
-		# c.execute('''select a.Train_No from Stoppage as a join Stoppage as b on a.Train_No = b.Train_No 
+		# c.execute('''select a.Train_No from Stoppage as a join Stoppage as b on a.Train_No = b.Train_No
 		# 	         where a.Station_Code = "%s" and b.Station_Code = "%s" ''' %(fstation, sstation))
 		response_json["train_details"]=[]
 		# trains = c.fetchall()
@@ -145,7 +143,7 @@ def findtrains(request):
 				temp_trains["train_no"]=str(t.Train_No)
 				train_name=Train.objects.get(Train_No=str(t.Train_No))
 				temp_trains["train_name"]=str(train_name.Name)
-				response_json["train_details"].append(temp_trains)	
+				response_json["train_details"].append(temp_trains)
 				print(response_json)
 			return JsonResponse(response_json)
 		except Exception as e:
@@ -154,10 +152,10 @@ def findtrains(request):
 		finally:
 			print("success")
 			pass
-			
+
 		#trains=train1.filter(Q(Station_Code=fstation) | Q(Station_Code=sstation)).values('Train_No').distinct()
 	else:
-		return HttpResponse(render(request, "findtrains.html", {"show":False}))	
+		return HttpResponse(render(request, "findtrains.html", {"show":False}))
 
 @login_required
 def ticket_details(request):
@@ -191,20 +189,20 @@ def ticket_details(request):
 		alpha = map(chr, range(97, 123))
 
 		invalid = False
-		
+
 		if len(fname) == 0:
 			invalid = True
 
 		for c in fname:
 			if c not in alpha:
 				invalid = True
-				break	
+				break
 
 		if invalid:
 			return HttpResponse("invalid fname, characters allowed [a-z]")
 
 		invalid = False
-		
+
 		if len(lname) == 0:
 			invalid = True
 
@@ -242,7 +240,7 @@ def ticket_details(request):
 		if str(tclass) == "third class ac" and int(train[5]) <= 0:
 			return HttpResponse("seat not available in third class ac")
 
-		c = connection.cursor()		
+		c = connection.cursor()
 		c.execute("SELECT * FROM Ticket")
 		maximum = 0
 		for row in c.fetchall():
@@ -253,7 +251,7 @@ def ticket_details(request):
 		now = datetime.datetime.now()
 		now = str(now)
 		jdate = (now.split())[0]
-		
+
 		c.execute('''INSERT INTO Ticket VALUES("%s", "%s", "%s", "%s")
 					 ''' %(ticketno, tnumber, jdate, request.user))
 
@@ -261,7 +259,7 @@ def ticket_details(request):
 			         Ticket_No, Age, Class) VALUES
 			         ("%s", "%s", "%s", "%s", "%s", "%s", "%s")
 			         ''' %(fname, lname, gender, number, ticketno, age, tclass))
-        
+
 		if str(tclass) == "sleeper":
 			c.execute('''UPDATE Train set Seat_Sleeper = "%s" WHERE Train_No = "%s"
 				         ''' %(int(train[2])-1, tnumber))
@@ -273,11 +271,11 @@ def ticket_details(request):
 				         ''' %(int(train[4])-1, tnumber))
 		if str(tclass) == "third class ac":
 			c.execute('''UPDATE Train set Seat_Third_Class_AC = "%s" WHERE Train_No = "%s"
-				         ''' %(int(train[5])-1, tnumber))			
+				         ''' %(int(train[5])-1, tnumber))
 
 		return HttpResponse(render(request, "ticket.html", {"show":True}))
 	else:
-		return HttpResponse(render(request, "ticket.html", {"show":False}))	
+		return HttpResponse(render(request, "ticket.html", {"show":False}))
 
 def signup(request):
 	if request.method == "POST":
@@ -292,7 +290,7 @@ def signup(request):
 		num = map(chr, range(48, 58))
 
 		invalid = False
-		
+
 		if len(username) == 0:
 			invalid = True
 
@@ -317,12 +315,12 @@ def signup(request):
 
 		if invalid:
 			return HttpResponse("space not allowed in the password")
-		
+
 		if len(address) == address.count(' '):
 			return HttpResponse("invalid address")
 
-		
-		invalidf, invalids = False, False	
+
+		invalidf, invalids = False, False
 
 		if len(fnumber) != 10:
 			invalidf = True
@@ -345,9 +343,9 @@ def signup(request):
 			#user = User.objects.create_user(username, None, password)
 			# c = connection.cursor()
 			# c.execute('INSERT INTO Account VALUES("%s", "%s", "%s", "%s")' %(username, password, email, address))
-			# if not invalidf:	
+			# if not invalidf:
 			# 	c.execute('INSERT INTO Contact VALUES("%s", "%s")' %(username, fnumber))
-			# if not invalids:	
+			# if not invalids:
 			# 	c.execute('INSERT INTO Contact VALUES("%s", "%s")' %(username, snumber))
 			account_data, created=Account.objects.get_or_create(Username=username,Password=password,Email_Id=email,Address=address)
 			account_data.save()
@@ -364,15 +362,18 @@ def login_user(request):
 		username = request.POST.get('username')
 		password = request.POST.get('password')
 
-		#user = authenticate(username = username, password = password)	
-		user=Account.objects.get(Username=username,Password=password)	
+		#user = authenticate(username = username, password = password)
+		try:
+			user=Account.objects.get(Username=username,Password=password)
+		except Exception as e:
+			return HttpResponse("User Not Found")
 
 		try :
 			if (user):
 				#login(request, user)
 				print("true")
 				return HttpResponse(render(request, "login_success.html",{"user_name": username}))
-			
+
 			else:
 				return HttpResponse("invalid credentials")
 		except Exception as e:
@@ -392,12 +393,12 @@ def login_user(request):
 			print e
 		finally:
 			c.close()
-		'''	
+		'''
 
 	return HttpResponse(render(request, "form_login.html"))
 
 
-def logout_user(request):	
-	logout(request)	
+def logout_user(request):
+	logout(request)
 	return HttpResponseRedirect("/home/")
 	#return HttpResponse(render(request, "home.html"))

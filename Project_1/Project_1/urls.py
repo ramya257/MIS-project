@@ -21,10 +21,10 @@ urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^signup/', views.signup),
     url(r'^login/', views.login_user),
-    url(r'^home/', views.home),    
+    url(r'^home/', views.home),
     #url(r'^logout/', views.logout_user),
     url(r'^logout/', views.home),
     url(r'^traininfo/', views.traininfo),
     url(r'^findtrains/', views.findtrains),
-    url(r'^ticket_details/', views.ticket_details),
+    #url(r'^ticket_details/', views.ticket_details),
 ]

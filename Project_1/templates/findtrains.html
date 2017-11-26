@@ -4,14 +4,14 @@
 <html>
 <head>
   <title>home</title>
-  <link rel="stylesheet" href="{% static 'css/findtrains.css' %}" /> 
+  <link rel="stylesheet" href="{% static 'css/findtrains.css' %}" />
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
   <script>
       $(function () {
         $('form').on('submit', function (e) {
 
           e.preventDefault();
-      
+
 
           $.ajax({
             type: 'POST',
@@ -22,7 +22,7 @@
               alert('form was submitted');
               console.log(data);
 
-      
+
       if(data.train_details.length!=0)
       {
          $.each(data.train_details, function() {
@@ -32,7 +32,7 @@
           var row = $("<td>"+this[key] + "</td>");
           console.log(key + " -> " + this[key]);
         }
-        $('#train_content').append("</tr>")
+        $('#train_content').append("</tr>");
         $("#train_content").append(row);
       }
     });
@@ -41,30 +41,31 @@
   {
     $('#error').append("No Trains Found");
   }
-     
+
 
 }
             });
           });
 
         });
-  
-        
+
+
+
 </script>
 
 </head>
-<body>  
-  <center>    
+<body>
+  <center>
     <h1> Find Trains </h1>
      <form method="POST" name="myform">{% csrf_token %}
   		<b>STATION CODE 1</b><br>
   		<input type="text" name="fstation"><br><br>
   		<b>STATION CODE 2</b><br>
- 		<input type="text" name="sstation"><br><br>
+ 		<input type="text" name="sstation" ><br><br>
  	    <input type="submit" onclick="submitForm()">
-	</form> <br> 
-    <a href="/logout/"> <button> logout </button> </a><br> 
-  </center>    
+	</form> <br>
+    <a href="/logout/"> <button> logout </button> </a><br>
+  </center>
   <center>
 	<h2>Trains Available</h2>
 	<table border = 1, style="width:100%" id="train_content">
@@ -81,5 +82,3 @@
   </center>
 </body>
 </html>
-
-

@@ -1,4 +1,4 @@
-input[type=submit] 
+input[type=submit]
 {
     background-color: blue; /* Green */
     border: none;
@@ -11,12 +11,13 @@ input[type=submit]
 }
 
 body {
-	background-image: url("../images/train.jpg");		
-    background-repeat: no-repeat; 
-     background-size: cover;
-     height: 100%
-     background-attachment: fixed;
-     background-position: center center;
+	background-image: url("../images/train.jpg");
+    background-repeat: no-repeat;
+  	background-size: cover;
+  	height: 100%;
+  	width:100%;
+  	background-attachment: fixed;
+  	background-position: center center;
 }
 
 button {

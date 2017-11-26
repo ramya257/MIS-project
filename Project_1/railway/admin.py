@@ -12,7 +12,7 @@ admin.site.register(Account, AccountAdmin)
 class ContactAdmin(admin.ModelAdmin):
 	list_display=["Username","Phone_No","modified", "created"]
 	"""docstring for ContactAdmin"""
-	
+
 admin.site.register(Contact, ContactAdmin)
 
 class StationAdmin(admin.ModelAdmin):

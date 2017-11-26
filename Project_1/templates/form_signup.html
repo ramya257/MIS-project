@@ -4,12 +4,24 @@
 <html>
 <head>
   <title>home</title>
-  <link rel="stylesheet" href="{% static 'css/form_login.css' %}" /> 
+  <link rel="stylesheet" href="{% static 'css/form_login.css' %}" />
 </head>
-<body>  
+<script>
+function ValidateEmail(mail)
+{
+ if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(myForm.email.value))
+  {
+    return (true)
+  }
+    alert("You have entered an invalid email address!")
+    return (false)
+}
+</script>
+
+<body>
   <center>
     <h1> Signup </h1>
-    <form method="POST">{% csrf_token %}
+    <form method="POST" name="myForm">{% csrf_token %}
       <b>USERNAME</b><br>
       <input type="text" name="username"><br><br>
       <b>PASSWORD</b><br>
@@ -19,10 +31,10 @@
       <b>ADDRESS</b><br>
       <input type="text" name="address"><br><br>
       <b>CONTACT</b><br>
-      <input type="text" name="fnumber"><br><br>  
+      <input type="text" name="fnumber"><br><br>
       <input type="text" name="snumber"><br><br>
-      <input type="submit">
-    </form> 
+      <input type="submit" value="Submit" onclick="ValidateEmail(document.myForm.email)">
+    </form>
   </center>
 </body>
 </html>
